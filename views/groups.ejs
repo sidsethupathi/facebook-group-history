@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+    <title>Groups</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script type="text/javascript">
+
+        function displayPost(data) {
+            for(var p in data) {
+                post = data[p]
+                var numl = 0, numc = 0, msg = "";
+                if(post.hasOwnProperty("likes"))
+                    numl = post.likes.data.length
+                if(post.hasOwnProperty("comments"))
+                    numc = post.comments.data.length
+                if(post.hasOwnProperty("message"))
+                    msg = post.message
+                var base_url = "https://www.facebook.com/groups/124362000979401/permalink/",
+                    post_id = post.id.split("_")[1],
+                    post_url = base_url + post_id;
+
+                $("#fbMessages").val($("#fbMessages").val() + " " + msg);
+
+                var newli = "<a href=\"" + post_url + "\">[L: " + numl + " C: " + numc + "] " + msg.substring(0,40) + "...</a>"; 
+                console.log(post_id);
+
+                $("#fbPosts").append("<li>" + newli);
+            }
+        }
+        console.log("starting");
+        var token = "?access_token=<%= user.facebook.token %>";
+        var url = "https://graph.facebook.com/v2.2/124362000979401/feed" + token;
+
+        var next_url = "";
+        //while(true) {
+            //if(url != next_url) {
+                next_url = url;
+               $.get(url, function(data) {
+                    displayPost(data.data)
+                    var newevent = new CustomEvent("blah", {
+                        'detail': data.paging.next
+                    });
+                    document.dispatchEvent(newevent);
+                }); 
+            //}
+        //}
+
+        
+        document.addEventListener("blah", function(e) {
+            var url = e.detail;
+            $.get(url, function(data) {
+                    displayPost(data.data);
+                    var newevent = new CustomEvent("blah", {
+                        'detail': data.paging.next
+                    });
+                    document.dispatchEvent(newevent);
+                });
+        });
+        
+        
+
+
+        
+    </script>
+        
+    <style>
+        body        { padding-top:80px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <textarea id="fbMessages"> </textarea>
+
+    <div class="jumbotron text-center">
+        <h1><span class="fa fa-lock"></span>Groups</h1>
+
+        <p>Hello <%= user.facebook.id %></p>
+        <p><%= user.facebook.token %></p>
+    </div>
+
+    <ul id="fbPosts">
+    </ul>
+
+    
+
+
+</div>
+</body>
+</html>
