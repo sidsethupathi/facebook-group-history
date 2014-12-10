@@ -70,7 +70,6 @@
 </head>
 <body>
 <div class="container">
-    <textarea id="fbMessages"> </textarea>
 
     <div class="jumbotron text-center">
         <h1><span class="fa fa-lock"></span>Groups</h1>
@@ -78,6 +77,9 @@
         <p>Hello <%= user.facebook.id %></p>
         <p><%= user.facebook.token %></p>
     </div>
+
+    <ul id="fbPosts">
+    </ul>
 
     
 
