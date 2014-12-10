@@ -22,8 +22,6 @@
                     post_id = post.id.split("_")[1],
                     post_url = base_url + post_id;
 
-                $("#fbMessages").val($("#fbMessages").val() + " " + msg);
-
                 var newli = "<a href=\"" + post_url + "\">[L: " + numl + " C: " + numc + "] " + msg.substring(0,40) + "...</a>"; 
                 console.log(post_id);
 
@@ -80,9 +78,6 @@
         <p>Hello <%= user.facebook.id %></p>
         <p><%= user.facebook.token %></p>
     </div>
-
-    <ul id="fbPosts">
-    </ul>
 
     
 
