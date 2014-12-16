@@ -21,7 +21,7 @@ app.use(bodyParser());
 app.set('view engine', 'ejs');
 
 app.use(session({ secret: 'sidhatesfun' }));
-app.use("/js", express.static(__dirname + 'frontend/js'));
+app.use(express.static(__dirname + '/frontend'));
 
 
 app.use(passport.initialize());

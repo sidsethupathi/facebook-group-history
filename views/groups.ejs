@@ -13,7 +13,7 @@
 
         function displayPost(data) {
             for(var g in data) {
-                group = data[g]
+                group = data[g];
                
                 var base_url = "/group/",
                     group_id = group.id,
@@ -62,11 +62,12 @@
 </head>
 <body>
 <div class="container">
+    <div class="text-right">
+        <p><%= user.facebook.name %> | <a href="/logout">logout</a>
+    </div>
 
     <div class="jumbotron text-center">
-        <h1><span class="fa fa-lock"></span>Groups</h1>
-
-        <p>Hello <%= user.facebook.id %></p>
+        <h1>Groups</h1>
     </div>
 
     <ul id="fbGroups">
