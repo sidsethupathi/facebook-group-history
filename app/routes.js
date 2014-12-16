@@ -21,6 +21,13 @@ module.exports = function(app, passport) {
 		});
 	});
 
+	app.get('/group/:group_id', isLoggedIn, function(req, res) {
+		res.render('group.ejs', {
+			user: req.user,
+			group_id: req.param('group_id')
+		});
+	});
+
 	app.get('/groups', isLoggedIn, function(req, res) {
 		res.render('groups.ejs', {
 			user: req.user
@@ -35,7 +42,7 @@ module.exports = function(app, passport) {
 	app.get('/auth/facebook', passport.authenticate('facebook', {scope: 'email,user_groups'}));
 
 	app.get('/auth/facebook/callback', passport.authenticate('facebook', {
-			successRedirect: '/groups',
+			successRedirect: '/group',
 			failureRedirect: '/'
 		})
 	);

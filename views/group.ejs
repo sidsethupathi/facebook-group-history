@@ -8,28 +8,34 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script type="text/javascript">
 
-        var token = "?access_token=<%= user.facebook.token %>";
-        var url = "https://graph.facebook.com/v2.2/<%= user.facebook.id %>/groups" + token;
-
         function displayPost(data) {
-            for(var g in data) {
-                group = data[g]
-               
-                var base_url = "/group/",
-                    group_id = group.id,
-                    post_url = base_url + group_id;
+            for(var p in data) {
+                post = data[p]
+                var numl = 0, numc = 0, msg = "";
+                if(post.hasOwnProperty("likes"))
+                    numl = post.likes.data.length
+                if(post.hasOwnProperty("comments"))
+                    numc = post.comments.data.length
+                if(post.hasOwnProperty("message"))
+                    msg = post.message
+                var base_url = "https://www.facebook.com/groups/<%= group_id %>/permalink/",
+                    post_id = post.id.split("_")[1],
+                    post_url = base_url + post_id;
 
-                var newli = "<a href=\"" + post_url + "\">" + group.name + "</a>"; 
+                var newli = "<a href=\"" + post_url + "\">[L: " + numl + " C: " + numc + "] " + msg.substring(0,40) + "...</a>"; 
+                console.log(post_id);
 
-                $("#fbGroups").append("<li>" + newli);
+                $("#fbPosts").append("<li>" + newli);
             }
         }
+
+        var token = "?access_token=<%= user.facebook.token %>";
+        var url = "https://graph.facebook.com/v2.2/<%= group_id %>/feed" + token;
 
         var next_url = "";
         next_url = url;
         $.get(url, function(data) {
-            console.log(data)
-            displayPost(data.data);
+            displayPost(data.data)
             var newevent = new CustomEvent("blah", {
                 'detail': data.paging.next
             });
@@ -39,15 +45,13 @@
         
         document.addEventListener("blah", function(e) {
             var url = e.detail;
-            if(url != undefined) {
-                $.get(url, function(data) {
-                        console.log(data);
-                        var newevent = new CustomEvent("blah", {
-                            'detail': data.paging.next
-                        });
-                        document.dispatchEvent(newevent);
+            $.get(url, function(data) {
+                    displayPost(data.data);
+                    var newevent = new CustomEvent("blah", {
+                        'detail': data.paging.next
                     });
-            }
+                    document.dispatchEvent(newevent);
+                });
         });
         
         
@@ -69,7 +73,7 @@
         <p>Hello <%= user.facebook.id %></p>
     </div>
 
-    <ul id="fbGroups">
+    <ul id="fbPosts">
     </ul>
 
     
